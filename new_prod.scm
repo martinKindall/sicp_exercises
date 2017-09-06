@@ -1,0 +1,10 @@
+(define (double x) (* x 2))
+(define (halve x) (/ x 2))
+
+(define (new-prod a b)
+	(cond ((= b 0) 0)
+		  ((= b 1) a)
+	      ((even? b) (double (new-prod a (halve b))))
+	      (else (+ a (new-prod a (- b 1))))
+	)
+)

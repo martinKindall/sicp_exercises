@@ -1,0 +1,38 @@
+(define (cube x)
+  (* x x x)
+)
+
+(define (sum f a next b)
+	(if (> a b) 0
+		(+ (f a) (sum f (next a) next b))
+	)
+)
+
+(define (integral-simpson f a b n)
+	(define h-const (/ (- b a) n))
+	(define (add-h x) (+ x h-const))
+	(define (add-h-twice x) (add-h (add-h x)))
+
+	(*	(/ h-const 3) 
+		(- 
+			(* 2 (+ (sum f a add-h b)
+					(sum f (+ a h-const) add-h-twice b)
+				 )
+			)
+			(+ (f a) (f (+ a (* n h-const))))
+		)
+	)
+)
+
+(define (integral-simpson_v2 f a b n)
+	(define h-const (/ (- b a) n))
+	(define (simp-term k) (f (+ a (* k h-const))))
+	(define (new-f x)
+		(cond ((= x 0) (simp-term 0))
+		      ((= x n) (simp-term n))
+		      ((even? x) (* 2 (simp-term x)))
+		      (else (* 4 (simp-term x)))
+		)
+	)
+	(* (/ h-const 3) (sum new-f 0 1+ n))
+)

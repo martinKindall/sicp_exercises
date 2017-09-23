@@ -2,6 +2,7 @@
   x
 )
 
+;; pitatoria recursiva
 (define (pitatoria f a next b)
   (if (> a b)
       1
@@ -9,8 +10,19 @@
   )
 )
 
+;; pitatoria iterativa
+(define (product f a next b)
+  (define (iter a result)
+    (if (> a b)
+        result
+        (iter (next a) (* result (f a)))
+    )
+  )
+  (iter a 1)
+)
+
 (define (factorial-new x)
-  (pitatoria identity 1 1+ x)
+  (product identity 1 1+ x)
 )
 
 (define (pi-series n)
@@ -20,5 +32,5 @@
         (/ (+ x 3.0) (+ x 2.0))
     )
   )
-  (pitatoria f-aux 0.0 1+ n)
+  (product f-aux 0.0 1+ n)
 )

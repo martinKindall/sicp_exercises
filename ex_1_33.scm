@@ -52,3 +52,21 @@
 (define (identity x)
   x
 )
+
+(define (gcd a b)
+	(if (= b 0)
+	    a
+	    (gcd b (remainder a b))
+	)
+)
+
+(define (rel-prime? a n)
+  (= (gcd n a) 1)
+)
+
+(define (prod-rel-primes n)
+	(define (rel-prime-aux? x)
+		(rel-prime? x n)
+	)
+	(filtered-accumulate * 1 rel-prime-aux? identity 1 1+ (- n 1))
+)

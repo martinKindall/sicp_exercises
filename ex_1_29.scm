@@ -36,3 +36,26 @@
 	)
 	(* (/ h-const 3) (sum new-f 0 1+ n))
 )
+
+(define (integral-simpson_v3 f a b n)
+	(let (
+			(h-const (/ (- b a) n))
+		 )
+		(* (/ h-const 3) 
+		   (sum 
+				(lambda (x) 
+					(let (
+							(y_k (lambda (y) (f (+ a (* y h-const)))))
+						 )
+						(cond ((= x 0) (y_k 0))
+					      ((= x n) (y_k n))
+					      ((even? x) (* 2 (y_k x)))
+					      (else (* 4 (y_k x)))
+					    )
+					)
+				) 
+				0 1+ n
+		   )
+		)
+	)
+)

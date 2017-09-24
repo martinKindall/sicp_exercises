@@ -70,3 +70,11 @@
 	)
 	(filtered-accumulate * 1 rel-prime-aux? identity 1 1+ (- n 1))
 )
+
+(define (prod-rel-primes_v2 n)
+	(filtered-accumulate * 1 
+		(lambda (x) 
+			(rel-prime? x n)
+		) 
+		identity 1 1+ (- n 1))
+)

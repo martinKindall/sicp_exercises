@@ -19,7 +19,11 @@
 )
 
 
-(let ((phi (cont-frac-iter (lambda (x) 1.0) (lambda (x) 1.0) 12)))
-	(/ 1 phi)
+;(let ((1_phi (cont-frac (lambda (x) 1.0) (lambda (x) 1.0) 12)))
+;	(/ 1 1_phi)
+;)
+
+(let ((1_phi (cont-frac-iter (lambda (x) 1.0) (lambda (x) 1.0) 12)))
+	(/ 1 1_phi)
 )
 

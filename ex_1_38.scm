@@ -18,18 +18,24 @@
 	)
 )
 
-(define (serie_v2 x)
-	(cond ((= x 1) 1)
-	      ((= x 2) 2)
-	      ((= (remainder (- x 2) 3) 0) (- x (/ (- x 2) 3)))
-	      (else 1)
-	)
-)
 
 ;(let ((euler-2 (cont-frac-iter (lambda (x) 1.0) serie 10)))
 ;	(+ euler-2 2)
 ;)
 
-(let ((euler-2 (cont-frac-iter (lambda (x) 1.0) serie_v2 10)))
+(let ((euler-2 
+		(cont-frac-iter 
+			(lambda (x) 1.0) 
+			(lambda (x) 
+				(cond ((= x 1) 1)
+				      ((= x 2) 2)
+				      ((= (remainder (- x 2) 3) 0) (- x (/ (- x 2) 3)))
+				      (else 1)
+				)
+			) 
+			10
+		)
+	  )
+	)
 	(+ euler-2 2)
 )

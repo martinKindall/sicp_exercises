@@ -9,4 +9,16 @@
 	)
 )
 
-((repeated square 2) 5)
+(define (repeated-iter f times)
+	(define (iter count res)
+		(if (= count times)
+		    res
+		    (iter (1+ count) (compose f res))
+		)
+	)
+	(iter 1 f)
+)
+
+;((repeated square 2) 5)
+
+((repeated-iter square 2) 5)

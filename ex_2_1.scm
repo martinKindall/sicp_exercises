@@ -14,7 +14,7 @@
 ;; reduced fraction and sign normalization 
 (define (make-rat numer denom)
   (let ((g (abs (gcd numer denom))))
-    (cond ((or (and (< numer 0) (< denom 0)) (and (< denom 0) (> numer 0))) (cons (/ (* numer -1) g) (/ (* denom -1) g)))
+    (cond ((< denom 0) (cons (/ (* numer -1) g) (/ (* denom -1) g)))
           (else (cons (/ numer g) (/ denom g)))
     )
   )

@@ -1,0 +1,35 @@
+(define (divisible? x)
+	(lambda (y) (= (remainder y x) 0))
+)
+
+(define (expo b n)
+	(define (exp-iter b a n)
+		(cond ((= n 0) a)
+		      (((divisible? 2) n) (exp-iter (square b) a (/ n 2)))
+		      (else (exp-iter b (* a b) (- n 1)))
+		)
+	)
+	(exp-iter b 1 n)
+)
+
+(define (cons-2 a b)
+  	(* (expo 2 a) (expo 3 b))
+)
+
+(define (times-div number factor)
+	(define (iter counter res)
+	  	(if ((divisible? factor) res)
+	  	    (iter (1+ counter ) (/ res factor))
+	  	    counter
+	  	)
+	)
+	(iter 0 number)
+)
+
+(define (car-2 pair)
+  	(times-div pair 2)
+)
+
+(define (cdr-2 pair)
+  	(times-div pair 3)
+)

@@ -33,10 +33,13 @@
 )
 
 (define (last-pair lista)
-    (list (list-ref lista (- (length-iter lista) 1)))
+    (if (null? (cdr lista))
+        (list (car lista))
+        (last-pair (cdr lista))
+    )
 )
 
-
+;; not sure if this procedure is efficient because it uses list-ref
 (define (append-iter list1 list2)
     (define (iter counter newList)
         (if (< counter 0)
@@ -96,7 +99,7 @@
     (define (iter oldList newList)
         (if (null? oldList)
             newList
-            (iter (cdr oldList) (append-iter (list (car oldList)) newList))
+            (iter (cdr oldList) (append (list (car oldList)) newList))
         )
     )
     (iter lista ())

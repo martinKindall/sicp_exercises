@@ -30,3 +30,11 @@
 (define (sqrt x)
 	(newton-method (lambda (y) (- (square y) x)) 1.0)
 )
+
+(define (average-damp f)
+  	(lambda (x) (/ (+ x (f x)) 2))
+)
+
+(define (sqrt-fix x)
+	(fixed-point (average-damp (lambda (y) (/ x y))) 1.0)
+)

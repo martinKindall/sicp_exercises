@@ -11,3 +11,13 @@
   	      (else (append (fringe (car lista)) (fringe (cdr lista))))
   	)
 )
+
+(define (fringe-iter parameters)
+  	(define (iter original result)
+  	  	(cond ((null? original) result)
+  	  	      ((pair? original) (iter (cdr original) (append result (fringe-iter (car original)))))
+  	  	      (else (list original))
+  	  	)
+  	)
+  	(iter parameters ())
+)

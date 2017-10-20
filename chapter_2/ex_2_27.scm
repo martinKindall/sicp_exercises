@@ -18,3 +18,13 @@
           (else (append (reverse-deep (cdr lista)) (list (car lista))))
 	)
 )
+
+(define (reverse-deep-iter parameters)
+    (define (iter original result)
+        (cond ((null? original) result)
+              ((pair? (car original)) (iter (cdr original) (append (list (reverse-deep-iter (car original))) result)))
+              (else (iter (cdr original) (append (list (car original)) result)))
+        )
+    )
+    (iter parameters ())
+)

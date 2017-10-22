@@ -12,6 +12,8 @@
   	)
 )
 
+; the following procedure generates a linear recursive process, the previous one a tree-shape process
+
 (define (fringe-iter parameters)
   	(define (iter original result)
   	  	(cond ((null? original) result)

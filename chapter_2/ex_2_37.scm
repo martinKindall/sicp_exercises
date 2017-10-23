@@ -1,0 +1,32 @@
+(define (accumulate op initial sequence)
+  	(cond ((null? sequence) initial)
+  	      (else (op (car sequence) (accumulate op initial (cdr sequence))))
+  	)
+)
+
+(define (accumulate-n op init seqs)
+  	(if (null? (car seqs))
+  	    '()
+  	    (cons (accumulate op init (map (lambda (sequence) (car sequence)) seqs)) 
+  	    	(accumulate-n op init (map (lambda (sequence) (cdr sequence)) seqs))
+  	    )
+  	)
+)
+
+(define (dot-product v w)
+  	(accumulate + 0 (map * v w))
+)
+
+(define (matrix-*-vector m v)
+  	(map (lambda (row) (dot-product row v)) m)
+)
+
+(define (transpose matrix)
+  	(accumulate-n cons '() matrix)
+)
+
+(define (matrix-*-matrix m n)
+	(let ((cols (transpose n)))
+  		(map (lambda (row) (matrix-*-vector cols row)) m)
+  	)
+)

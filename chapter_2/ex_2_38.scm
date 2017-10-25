@@ -1,0 +1,25 @@
+(define (fold-right op initial sequence)
+  	(cond ((null? sequence) initial)
+  	      (else (op (car sequence) (fold-right op initial (cdr sequence))))
+  	)
+)
+
+(define (fold-left op initial sequence)
+  	(define (iter result rest)
+  	  	(cond ((null? rest) result)
+  	  	      (else (iter (op result (car rest)) (cdr rest)))
+  	  	)
+  	)
+  	(iter initial sequence)
+)
+
+(define (for-each proc sequence)
+  	(fold-right (lambda (x y) (proc x)) true (reverse sequence))
+)
+
+(define res1 (fold-right / 1 (list 1 2 3)))
+(define res2 (fold-left / 1 (list 1 2 3)))
+(define res3 (fold-right list '() (list 1 2 3)))
+(define res4 (fold-left list '() (list 1 2 3)))
+
+(for-each (lambda (x)(newline)(display x)) (list res1 res2 res3 res4))

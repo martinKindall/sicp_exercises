@@ -1,0 +1,22 @@
+(define (fold-right op initial sequence)
+  	(cond ((null? sequence) initial)
+  	      (else (op (car sequence) (fold-right op initial (cdr sequence))))
+  	)
+)
+
+(define (fold-left op initial sequence)
+  	(define (iter result rest)
+  	  	(cond ((null? rest) result)
+  	  	      (else (iter (op result (car rest)) (cdr rest)))
+  	  	)
+  	)
+  	(iter initial sequence)
+)
+
+(define (reverse-v1 sequence)
+  	(fold-right (lambda (x y) (append y (list x))) '() sequence)
+)
+
+(define (reverse-v2 sequence)
+  	(fold-left (lambda (x y) (cons y x)) '() sequence)
+)

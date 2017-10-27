@@ -26,7 +26,7 @@
 (define (filter predicate? sequence)
 	(define (iter result rest)
 	  	(cond ((null? rest) result)
-	  	      ((predicate? (car rest)) (iter (append result (car rest)) (cdr rest)))
+	  	      ((predicate? (car rest)) (iter (append result (list (car rest))) (cdr rest)))
 	  	      (else (iter result (cdr rest)))
 	  	)
 	)

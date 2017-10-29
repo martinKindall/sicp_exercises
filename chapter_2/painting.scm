@@ -39,7 +39,7 @@
 (define (square-of-four tl tr bl br)
     (lambda (painter) 
         (let ((top (beside (tl painter) (tr painter)))
-               (bot (beside (br painter) (bl painter)))
+               (bot (beside (bl painter) (br painter)))
              )
             (below bot top)
         )

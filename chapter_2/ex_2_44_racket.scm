@@ -5,7 +5,7 @@
   	(if (= n 0)
   	    painter
   	    (let ((smaller (right-split painter (- n 1))))
-  	    	(beside painter (bellow smaller smaller))
+  	    	(beside painter (below smaller smaller))
   	    )
   	)
 )
@@ -14,7 +14,7 @@
   	(if (= n 0)
   	    painter
   	    (let ((smaller (up-split painter (- n 1))))
-  	    	(bellow painter (beside smaller smaller))
+  	    	(below painter (beside smaller smaller))
   	    )
   	)
 )
@@ -26,7 +26,7 @@
   	    	   (right (right-split painter (- n 1)))
   	    	 )
   	    	(let ((top-left (beside up up))
-  	    		   (bottom-right (bellow right right))
+  	    		   (bottom-right (below right right))
   	    		   (corner (corner-split painter (- n 1)))
   	    	     )
   	    		(beside (below painter top-left) (below bottom-right corner))
@@ -34,3 +34,5 @@
   	    )
   	)
 )
+
+; (paint (corner-split einstein 2))

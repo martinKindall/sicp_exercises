@@ -18,14 +18,8 @@
   	(make-vect (op (xcor-vect v1) (xcor-vect v2)) (op (ycor-vect v1) (ycor-vect v2)))
 )
 
-(define (add-vect v1 v2)
-	(op-vect + v1 v2)
-)
+(define add-vect (lambda (v1 v2)(op-vect + v1 v2)))
 
-(define (sub-vect v1 v2)
-  	(op-vect - v1 v2)
-)
+(define sub-vect (lambda (v1 v2)(op-vect - v1 v2)))
 
-(define (scale-vect param v)
-  	(op-vect * (make-vect param param) v)
-)
+(define scale-vect (lambda (param vector) (op-vect * (make-vect param param) vector)))

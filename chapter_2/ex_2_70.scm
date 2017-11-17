@@ -79,10 +79,6 @@
     (car (successive-merge (make-leaf-set pairs)))
 )
 
-(define example-tree
-    (generate-huffman-tree '((a 8) (b 3) (c 1) (d 1) (e 1) (f 1) (g 1) (h 1)))
-)
-
 (define (element-of-set? x set)
     (cond ((null? set) false)
           ((equal? x (car set)) true)
@@ -115,15 +111,6 @@
     )
 )
 
-(define encoded-msg (encode '(B A C A D A E A F A B B A A A G A H) example-tree))
-
-
-; note that the string of bits that comes out from the previous
-; encode doesn't match the one shown in the book, but that's ok,
-; because our example-tree has its branches arranged in a 
-; different way, because the choice of the order in which
-; the nodes are merged in 'successive-merge' is arbitrary 
-
 (define (decode bits tree)
     (define (choose-branch bit branch)
         (cond ((= bit 0) (left-branch branch))
@@ -146,6 +133,12 @@
     (decode-1 bits tree)
 )
 
-(decode encoded-msg example-tree)
+(define song-alphabet '((a 2) (get 2) (sha 3) (wah 1) (boom 1) (job 2) (na 16) (yip 9)))
 
-; (b a c a d a e a f a b b a a a g a h)
+(define song-tree (generate-huffman-tree song-alphabet))
+
+(define song 
+    '(get a job sha na na na na na na na na get a job sha na na na na na na na na wah yip yip yip yip yip yip yip yip yip sha boom)
+)
+
+(encode song song-tree)

@@ -23,6 +23,14 @@
     )
 )
 
+(define (make-exponentiation base exponent)
+    (cond ((=number? exponent 1) base)
+          ((=number? exponent 0) 1)
+          ((and (number? base) (number? exponent)) (expo base exponent))
+          (else (list '** base exponent))
+    )
+)
+
 (define (deriv exp var)
     (cond ((number? exp) 0)
           ((variable? exp) (if (same-variable? exp var) 1 0))
@@ -82,6 +90,33 @@
     ; interface to the rest of the system
 
     (put 'deriv '(*) deriv-prod)
+
+    'done
+)
+
+(define (install-exp)
+    ; internal procedures
+    (define (base exp)
+        (car exp)
+    )
+
+    (define (exponent exp)
+        (cadr exp)
+    )
+
+    (define (deriv-exp exp var)
+        (make-product
+            (make-product
+                (exponent exp)
+                (make-exponentiation (base exp) (make-sum (exponent exp) -1))
+            )
+            (deriv (base exp) var)
+        )
+    )
+
+    ; interface to the rest of the system
+
+    (put 'deriv '(**) deriv-exp)
 
     'done
 )

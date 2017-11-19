@@ -120,3 +120,16 @@
 
     'done
 )
+
+; answer to d)
+
+; if we have the following dispatch line:
+
+; ((get (operator exp) 'deriv) (operands exp) var)
+
+; Then the type is 'deriv and the operations are +, * and **
+
+; then, to get an appropiate procedure, we must change put procedure in each module,
+; for example, in the sum module, put would be:
+
+;(put '+ '(deriv) deriv-sum)

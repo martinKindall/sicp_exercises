@@ -1,0 +1,10 @@
+(define (show arg1 . args)
+  	(newline)
+  	(display arg1)
+  	(if (not (null? args))
+  		(display args)
+  	)
+  	(newline)
+)
+
+(apply show '(1 2 3 4 5))

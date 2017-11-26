@@ -1,0 +1,11 @@
+(define (accumulate op initial sequence)
+    (cond ((null? sequence) initial)
+          (else (op (car sequence) (accumulate op initial (cdr sequence))))
+    )
+)
+
+(define (eq-list? aList)
+    (let ((first (car aList)))
+        (accumulate (lambda (x y) (and x y)) true (map (lambda (item) (eq? first item)) (cdr aList)))
+    )
+)

@@ -390,7 +390,7 @@
 
     (define (=zero? p)
         (let ((terms (term-list p)))
-            (and (= (length terms) 1) (and (zero? (coeff (first-term terms))) (= (order (first-term terms)) 0)))
+            (or (and (= (length terms) 1) (and (zero? (coeff (first-term terms))) (= (order (first-term terms)) 0))) (empty-termlist? terms))
         )
     )
 
@@ -547,3 +547,5 @@
 (define p1 (make-polynomial 'x '((5 1) (2 1) (0 5))))
 (define p2 (make-polynomial 'y (list (list 0 p1))))
 (define p3 (make-polynomial 'y (list (list 2 p1) '(1 4))))
+(define zero-p (make-polynomial 'x '((0 0))))
+(define zero-p-2 (make-polynomial 'x '()))

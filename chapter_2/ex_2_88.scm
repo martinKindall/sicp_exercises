@@ -110,6 +110,7 @@
     (put 'sqrt-new '(scheme-number) sqrt)
     (put 'square-new '(scheme-number) square)
     (put '=zero? '(scheme-number) (lambda (x) (= x 0)))
+    (put 'negate '(scheme-number) (lambda (x) (* -1 x)))
     'done
 )
 
@@ -165,6 +166,10 @@
         (= (numer x) 0)
     )
 
+    (define (negate-rat rational)
+        (make-rat (mul -1 (numer rational)) (denom rational))
+    )
+
     ; interface to rest of the system
 
     (define (tag x) (attach-tag 'rational x))
@@ -182,6 +187,7 @@
     (put 'sqrt-new '(rational) (lambda (x) (sqrt (to-real x))))
     (put 'square-new '(rational) (lambda (x) (square (to-real x))))
     (put '=zero? '(rational) =zero?)
+    (put 'negate '(rational) (lambda (rat) (tag (negate-rat rat))))
     'done
 )
 
@@ -314,6 +320,10 @@
         (eq-complex? x (make-from-real-imag 0 0))
     )
 
+    (define (negate-complex z1)
+        (make-from-real-imag (mul -1 (real-part z1)) (mul -1 (imag-part z1)))
+    )
+
     ; interface
 
     (define (tag x) (attach-tag 'complex x))
@@ -330,6 +340,7 @@
     (put 'angle '(complex) angle)
     (put 'project '(complex) to-real)
     (put '=zero? '(complex) =zero?)
+    (put 'negate '(complex) (lambda (z1) (tag (negate-complex z1))))
     'done
 )
 
@@ -435,8 +446,8 @@
 
     ; /representation of terms and term list
 
-    (define (negate poly)
-        (mul-poly poly (make-poly (variable poly) '((0 -1))))
+    (define (negate-poly poly)
+        (make-poly (variable poly) (map (lambda (term) (make-term (order term) (negate (coeff term)))) (term-list poly)))
     )
 
     (define (add-poly p1 p2)
@@ -448,7 +459,7 @@
     )
 
     (define (sub-poly p1 p2)
-        (add-poly p1 (negate p2))
+        (add-poly p1 (negate-poly p2))
     )
 
     (define (mul-poly p1 p2)
@@ -467,11 +478,10 @@
     (put 'sub '(polynomial polynomial)
         (lambda (p1 p2) (tag (sub-poly p1 p2))))
     (put 'mul '(polynomial polynomial) (lambda (p1 p2) (tag (mul-poly p1 p2))))
-    (put 'mul '(polynomial scheme-number) (lambda (p1 p2) (tag (mul-poly p1 (make-poly (variable p1) (list (list 0 p2)))))))
-    (put 'mul '(scheme-number polynomial) (lambda (p1 p2) (tag (mul-poly p2 (make-poly (variable p2) (list (list 0 p1)))))))
     (put 'make '(polynomial) (lambda (var terms) (tag (make-poly var terms))))
     (put 'project '(polynomial) (lambda (p) false))
     (put '=zero? '(polynomial) =zero?)
+    (put 'negate '(polynomial) (lambda (p1) (tag (negate-poly p1))))
     'done
 )
 
@@ -548,6 +558,7 @@
 (define (sqrt-new x) (apply-generic 'sqrt-new x))
 (define (square-new x) (apply-generic 'square-new x))
 (define (zero? x) (apply-generic '=zero? x))
+(define (negate x) (apply-generic 'negate x))
 
 
 (define z1 (make-complex-from-real-imag 2 2))

@@ -405,15 +405,15 @@
 )
 
 (define (install-dense-term-list-package)
-    (define (first-term term-list)
+    (define (first-term-dense term-list)
         (make-term (-1+ (length term-list)) (car term-list))
     )
 
-    (define (rest-terms term-list)
+    (define (rest-terms-dense term-list)
         (cdr term-list)
     )
 
-    (define (adjoin-term term term-list)
+    (define (adjoin-term-dense term term-list)
         (if (zero? (coeff term))
             term-list
             (let ((large (length term-list)))
@@ -428,8 +428,8 @@
     (define (negate-dense term-list)
         (if (empty-termlist? term-list)
             nil
-            (let ((first (first-term term-list)))
-                (adjoin-term (make-term (order first) (negate (coeff first))) (negate-dense (rest-terms term-list)))
+            (let ((first (first-term-dense term-list)))
+                (adjoin-term-dense (make-term (order first) (negate (coeff first))) (negate-dense (rest-terms-dense term-list)))
             )
         )
     )
@@ -437,9 +437,9 @@
     ; interface
 
     (define (tag x) (attach-tag 'dense x))
-    (put 'first-term '(dense) first-term)
-    (put 'adjoin-term '(term dense) (lambda (term term-list) (tag (adjoin-term term term-list))))
-    (put 'rest-terms '(dense) (lambda (pol) (tag (rest-terms pol))))
+    (put 'first-term '(dense) first-term-dense)
+    (put 'adjoin-term '(term dense) (lambda (term term-list) (tag (adjoin-term-dense term term-list))))
+    (put 'rest-terms '(dense) (lambda (pol) (tag (rest-terms-dense pol))))
     (put 'empty-termlist? '(dense) empty-termlist?)
     (put 'make-terms '(dense) (lambda (terms) (tag terms)))
     (put 'negate '(dense) (lambda (p1) (tag (negate-dense p1))))
@@ -451,15 +451,15 @@
 )
 
 (define (install-sparse-term-list-package)
-    (define (first-term term-list)
+    (define (first-term-sparse term-list)
         (make-term (car (car term-list)) (cadr (car term-list)))
     )
 
-    (define (rest-terms term-list)
+    (define (rest-terms-sparse term-list)
         (cdr term-list)
     )
 
-    (define (adjoin-term term term-list)
+    (define (adjoin-term-sparse term term-list)
         (if (zero? (coeff term))
             term-list
             (cons term term-list)
@@ -469,8 +469,8 @@
     (define (negate-sparse term-list)
         (if (empty-termlist? term-list)
             nil
-            (let ((first (first-term term-list)))
-                (adjoin-term (make-term (order first) (negate (coeff first))) (negate-sparse (rest-terms term-list)))
+            (let ((first (first-term-sparse term-list)))
+                (adjoin-term-sparse (make-term (order first) (negate (coeff first))) (negate-sparse (rest-terms-sparse term-list)))
             )
         )
     )
@@ -478,9 +478,9 @@
     ; interface
 
     (define (tag x) (attach-tag 'sparse x))
-    (put 'first-term '(sparse) first-term)
-    (put 'adjoin-term '(term sparse) (lambda (term term-list) (tag (adjoin-term term term-list))))
-    (put 'rest-terms '(sparse) (lambda (pol) (tag (rest-terms pol))))
+    (put 'first-term '(sparse) first-term-sparse)
+    (put 'adjoin-term '(term sparse) (lambda (term term-list) (tag (adjoin-term-sparse term term-list))))
+    (put 'rest-terms '(sparse) (lambda (pol) (tag (rest-terms-sparse pol))))
     (put 'empty-termlist? '(sparse) empty-termlist?)
     (put 'make-terms '(sparse) (lambda (terms) (tag terms)))
     (put 'negate '(sparse) (lambda (p1) (tag (negate-sparse p1))))
@@ -547,7 +547,7 @@
     ; /representation of terms and term list
 
     (define (negate-poly poly)
-        (make-poly (variable poly) (negate (term-list)))
+        (make-poly (variable poly) (negate (term-list poly)))
     )
 
     (define (add-poly p1 p2)
@@ -671,6 +671,7 @@
 (define (make-term order coeff) (apply-generic 'make-term order coeff))
 (define (order term) (apply-generic 'order term))
 (define (coeff term) (apply-generic 'coeff term))
+(define (adjoin-term term term-list) (apply-generic 'adjoin-term term term-list))
 
 
 (define z1 (make-complex-from-real-imag 2 2))

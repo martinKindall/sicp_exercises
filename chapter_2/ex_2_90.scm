@@ -371,17 +371,30 @@
 ; ------polynomial numbers------
 
 ; term representation
-(define (make-term order coeff)
-    (list order coeff)
-)
+(define (install-polynomial-term-package)
+    (define (make-term-proc order coeff)
+        (list order coeff)
+    )
 
-(define (order term)
-    (car term)
-)
+    (define (order-proc term)
+        (car term)
+    )
 
-(define (coeff term)
-    (cadr term)
+    (define (coeff-proc term)
+        (cadr term)
+    )
+
+    ; interface
+
+    (define (tag x) (attach-tag 'term x))
+    (put 'make-term '(scheme-number scheme-number) (lambda (order coeff) (tag (make-term-proc order coeff))))
+    (put 'make-term '(scheme-number polynomial) (lambda (order coeff) (tag (make-term-proc order coeff))))
+    (put 'make-term '(scheme-number complex) (lambda (order coeff) (tag (make-term-proc order coeff))))
+    (put 'make-term '(scheme-number rational) (lambda (order coeff) (tag (make-term-proc order coeff))))
+    (put 'order '(term) order-proc)
+    (put 'coeff '(term) coeff-proc)
 )
+(install-polynomial-term-package)
 
 (define (the-empty-termlist)
     nil
@@ -412,14 +425,24 @@
         )
     )
 
+    (define (negate-dense term-list)
+        (if (empty-termlist? term-list)
+            nil
+            (let ((first (first-term term-list)))
+                (adjoin-term (make-term (order first) (negate (coeff first))) (negate-dense (rest-terms term-list)))
+            )
+        )
+    )
+
     ; interface
 
     (define (tag x) (attach-tag 'dense x))
     (put 'first-term '(dense) first-term)
-    (put 'adjoin-term '(dense dense) (lambda (term term-list) (tag (adjoin-term term term-list))))
+    (put 'adjoin-term '(term dense) (lambda (term term-list) (tag (adjoin-term term term-list))))
     (put 'rest-terms '(dense) (lambda (pol) (tag (rest-terms pol))))
     (put 'empty-termlist? '(dense) empty-termlist?)
     (put 'make-terms '(dense) (lambda (terms) (tag terms)))
+    (put 'negate '(dense) (lambda (p1) (tag (negate-dense p1))))
 )
 (install-dense-term-list-package)
 
@@ -429,7 +452,7 @@
 
 (define (install-sparse-term-list-package)
     (define (first-term term-list)
-        (car term-list)
+        (make-term (car (car term-list)) (cadr (car term-list)))
     )
 
     (define (rest-terms term-list)
@@ -443,14 +466,24 @@
         )
     )
 
+    (define (negate-sparse term-list)
+        (if (empty-termlist? term-list)
+            nil
+            (let ((first (first-term term-list)))
+                (adjoin-term (make-term (order first) (negate (coeff first))) (negate-sparse (rest-terms term-list)))
+            )
+        )
+    )
+
     ; interface
 
     (define (tag x) (attach-tag 'sparse x))
     (put 'first-term '(sparse) first-term)
-    (put 'adjoin-term '(sparse sparse) (lambda (term term-list) (tag (adjoin-term term term-list))))
+    (put 'adjoin-term '(term sparse) (lambda (term term-list) (tag (adjoin-term term term-list))))
     (put 'rest-terms '(sparse) (lambda (pol) (tag (rest-terms pol))))
     (put 'empty-termlist? '(sparse) empty-termlist?)
     (put 'make-terms '(sparse) (lambda (terms) (tag terms)))
+    (put 'negate '(sparse) (lambda (p1) (tag (negate-sparse p1))))
 )
 (install-sparse-term-list-package)
 
@@ -514,7 +547,7 @@
     ; /representation of terms and term list
 
     (define (negate-poly poly)
-        (make-poly (variable poly) (map (lambda (term) (make-term (order term) (negate (coeff term)))) (term-list poly)))
+        (make-poly (variable poly) (negate (term-list)))
     )
 
     (define (add-poly p1 p2)
@@ -635,6 +668,9 @@
 (define (first-term x) (apply-generic 'first-term x))
 (define (rest-terms x) (apply-generic 'rest-terms x))
 (define (negate x) (apply-generic 'negate x))
+(define (make-term order coeff) (apply-generic 'make-term order coeff))
+(define (order term) (apply-generic 'order term))
+(define (coeff term) (apply-generic 'coeff term))
 
 
 (define z1 (make-complex-from-real-imag 2 2))

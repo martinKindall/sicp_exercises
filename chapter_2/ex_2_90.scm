@@ -434,6 +434,38 @@
         )
     )
 
+    (define (add-terms-dense L1 L2)
+        (cond ((empty-termlist? L1) L2)
+              ((empty-termlist? L2) L1)
+              (else 
+                (let ((t1 (first-term-dense L1)) (t2 (first-term-dense L2)))
+                    (cond ((> (order t1) (order t2)) (adjoin-term-dense t1 (add-terms-dense (rest-terms-dense L1) L2)))
+                          ((< (order t1) (order t2)) (adjoin-term-dense t2 (add-terms-dense (rest-terms-dense L2) L1)))
+                          (else 
+                            (adjoin-term-dense (make-term (order t1) (add (coeff t1) (coeff t2))) (add-terms-dense (rest-terms-dense L1) (rest-terms-dense L2)))
+                          )
+                    )
+                )
+              )
+        )
+    )
+
+    (define (mul-terms-dense L1 L2)
+        (if (empty-termlist? L1)
+            (the-empty-termlist)
+            (add-terms-dense (mul-term-by-all-terms-dense (first-term-dense L1) L2) (mul-terms-dense (rest-terms-dense L1) L2))
+        )
+    )
+
+    (define (mul-term-by-all-terms-dense t1 L)
+        (if (empty-termlist? L)
+            (the-empty-termlist)
+            (let ((t2 (first-term-dense L)))
+                (adjoin-term-dense (make-term (+ (order t1) (order t2)) (mul (coeff t1) (coeff t2))) (mul-term-by-all-terms-dense t1 (rest-terms-dense L)))
+            )
+        )    
+    )
+
     ; interface
 
     (define (tag x) (attach-tag 'dense x))
@@ -443,6 +475,8 @@
     (put 'empty-termlist? '(dense) empty-termlist?)
     (put 'make-terms '(dense) (lambda (terms) (tag terms)))
     (put 'negate '(dense) (lambda (p1) (tag (negate-dense p1))))
+    (put 'add-terms '(dense dense) (lambda (term-list term-list) (tag (add-terms-dense term-list term-list))))
+    (put 'mul-terms '(dense dense) (lambda (term-list term-list) (tag (mul-terms-dense term-list term-list))))
 )
 (install-dense-term-list-package)
 
@@ -479,11 +513,45 @@
         )
     )
 
+    (define (add-terms-sparse L1 L2)
+        (cond ((empty-termlist? L1) L2)
+              ((empty-termlist? L2) L1)
+              (else 
+                (let ((t1 (first-term-sparse L1)) (t2 (first-term-sparse L2)))
+                    (cond ((> (order t1) (order t2)) (adjoin-term-sparse t1 (add-terms-sparse (rest-terms-sparse L1) L2)))
+                          ((< (order t1) (order t2)) (adjoin-term-sparse t2 (add-terms-sparse (rest-terms-sparse L2) L1)))
+                          (else 
+                            (adjoin-term-sparse (make-term (order t1) (add (coeff t1) (coeff t2))) (add-terms-sparse (rest-terms-sparse L1) (rest-terms-sparse L2)))
+                          )
+                    )
+                )
+              )
+        )
+    )
+
+    (define (mul-terms-sparse L1 L2)
+        (if (empty-termlist? L1)
+            (the-empty-termlist)
+            (add-terms-sparse (mul-term-by-all-terms-sparse (first-term-sparse L1) L2) (mul-terms-sparse (rest-terms-sparse L1) L2))
+        )
+    )
+
+    (define (mul-term-by-all-terms-sparse t1 L)
+        (if (empty-termlist? L)
+            (the-empty-termlist)
+            (let ((t2 (first-term-sparse L)))
+                (adjoin-term-sparse (make-term (+ (order t1) (order t2)) (mul (coeff t1) (coeff t2))) (mul-term-by-all-terms-sparse t1 (rest-terms-sparse L)))
+            )
+        )    
+    )
+
     ; interface
 
     (define (tag x) (attach-tag 'sparse x))
     (put 'first-term '(sparse) first-term-sparse)
     (put 'adjoin-term '(term sparse) (lambda (term term-list) (tag (adjoin-term-sparse term term-list))))
+    (put 'add-terms '(sparse sparse) (lambda (term-list term-list) (tag (add-terms-sparse term-list term-list))))
+    (put 'mul-terms '(sparse sparse) (lambda (term-list term-list) (tag (mul-terms-sparse term-list term-list))))
     (put 'rest-terms '(sparse) (lambda (pol) (tag (rest-terms-sparse pol))))
     (put 'empty-termlist? '(sparse) empty-termlist?)
     (put 'make-terms '(sparse) (lambda (terms) (tag terms)))
@@ -514,43 +582,6 @@
         (let ((terms (term-list p)))
             (or (and (= (length terms) 1) (and (zero? (coeff (first-term terms))) (= (order (first-term terms)) 0))) (empty-termlist? terms))
         )
-    )
-
-    (define (add-terms L1 L2)
-        (newline)
-        (display L1)
-        (display " ")
-        (display L2)
-        (newline)
-        (cond ((empty-termlist? L1) L2)
-              ((empty-termlist? L2) L1)
-              (else 
-                (let ((t1 (first-term L1)) (t2 (first-term L2)))
-                    (cond ((> (order t1) (order t2)) (adjoin-term t1 (add-terms (rest-terms L1) L2)))
-                          ((< (order t1) (order t2)) (adjoin-term t2 (add-terms (rest-terms L2) L1)))
-                          (else 
-                            (adjoin-term (make-term (order t1) (add (coeff t1) (coeff t2))) (add-terms (rest-terms L1) (rest-terms L2)))
-                          )
-                    )
-                )
-              )
-        )
-    )
-
-    (define (mul-terms L1 L2)
-        (if (empty-termlist? L1)
-            (the-empty-termlist)
-            (add-terms (mul-term-by-all-terms (first-term L1) L2) (mul-terms (rest-terms L1) L2))
-        )
-    )
-
-    (define (mul-term-by-all-terms t1 L)
-        (if (empty-termlist? L)
-            (the-empty-termlist)
-            (let ((t2 (first-term L)))
-                (adjoin-term (make-term (+ (order t1) (order t2)) (mul (coeff t1) (coeff t2))) (mul-term-by-all-terms t1 (rest-terms L)))
-            )
-        )    
     )
 
     ; /representation of terms and term list
@@ -587,8 +618,6 @@
     (put 'sub '(polynomial polynomial)
         (lambda (p1 p2) (tag (sub-poly p1 p2))))
     (put 'mul '(polynomial polynomial) (lambda (p1 p2) (tag (mul-poly p1 p2))))
-    (put 'mul '(polynomial scheme-number) (lambda (p1 p2) (tag (mul-poly p1 (make-poly (variable p1) (list p2))))))
-    (put 'mul '(scheme-number polynomial) (lambda (p1 p2) (tag (mul-poly p2 (make-poly (variable p2) (list p1))))))
     (put 'make-dense '(polynomial) (lambda (var terms) (tag (make-poly var (make-dense-terms terms)))))
     (put 'make-sparse '(polynomial) (lambda (var terms) (tag (make-poly var (make-sparse-terms terms)))))
     (put 'project '(polynomial) (lambda (p) false))
@@ -682,6 +711,8 @@
 (define (coeff term) (apply-generic 'coeff term))
 (define (adjoin-term term term-list) (apply-generic 'adjoin-term term term-list))
 (define (empty-termlist? term-list) (apply-generic 'empty-termlist? term-list))
+(define (add-terms term-list term-list) (apply-generic 'add-terms term-list term-list))
+(define (mul-terms term-list term-list) (apply-generic 'mul-terms term-list term-list))
 
 
 (define z1 (make-complex-from-real-imag 2 2))

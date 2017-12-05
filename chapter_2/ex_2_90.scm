@@ -371,30 +371,17 @@
 ; ------polynomial numbers------
 
 ; term representation
-(define (install-polynomial-term-package)
-    (define (make-term-proc order coeff)
-        (list order coeff)
-    )
-
-    (define (order-proc term)
-        (car term)
-    )
-
-    (define (coeff-proc term)
-        (cadr term)
-    )
-
-    ; interface
-
-    (define (tag x) (attach-tag 'term x))
-    (put 'make-term '(scheme-number scheme-number) (lambda (order coeff) (tag (make-term-proc order coeff))))
-    (put 'make-term '(scheme-number polynomial) (lambda (order coeff) (tag (make-term-proc order coeff))))
-    (put 'make-term '(scheme-number complex) (lambda (order coeff) (tag (make-term-proc order coeff))))
-    (put 'make-term '(scheme-number rational) (lambda (order coeff) (tag (make-term-proc order coeff))))
-    (put 'order '(term) order-proc)
-    (put 'coeff '(term) coeff-proc)
+(define (make-term order coeff)
+    (list order coeff)
 )
-(install-polynomial-term-package)
+
+(define (order term)
+    (car term)
+)
+
+(define (coeff term)
+    (cadr term)
+)
 
 (define (the-empty-termlist)
     nil
@@ -470,7 +457,6 @@
 
     (define (tag x) (attach-tag 'dense x))
     (put 'first-term '(dense) first-term-dense)
-    (put 'adjoin-term '(term dense) (lambda (term term-list) (tag (adjoin-term-dense term term-list))))
     (put 'rest-terms '(dense) (lambda (pol) (tag (rest-terms-dense pol))))
     (put 'empty-termlist? '(dense) empty-termlist?)
     (put 'make-terms '(dense) (lambda (terms) (tag terms)))
@@ -549,7 +535,6 @@
 
     (define (tag x) (attach-tag 'sparse x))
     (put 'first-term '(sparse) first-term-sparse)
-    (put 'adjoin-term '(term sparse) (lambda (term term-list) (tag (adjoin-term-sparse term term-list))))
     (put 'add-terms '(sparse sparse) (lambda (term-list1 term-list2) (tag (add-terms-sparse term-list1 term-list2))))
     (put 'mul-terms '(sparse sparse) (lambda (term-list1 term-list2) (tag (mul-terms-sparse term-list1 term-list2))))
     (put 'rest-terms '(sparse) (lambda (pol) (tag (rest-terms-sparse pol))))
@@ -706,9 +691,6 @@
 (define (first-term x) (apply-generic 'first-term x))
 (define (rest-terms x) (apply-generic 'rest-terms x))
 (define (negate x) (apply-generic 'negate x))
-(define (make-term order coeff) (apply-generic 'make-term order coeff))
-(define (order term) (apply-generic 'order term))
-(define (coeff term) (apply-generic 'coeff term))
 (define (adjoin-term term term-list) (apply-generic 'adjoin-term term term-list))
 (define (empty-termlist? term-list) (apply-generic 'empty-termlist? term-list))
 (define (add-terms term-list1 term-list2) (apply-generic 'add-terms term-list1 term-list2))
@@ -724,6 +706,7 @@
 (define p1 (make-polynomial-dense 'x '(1 0 0 1 0 5)))
 (define p2 (make-polynomial-dense 'y (list p1)))
 (define p3 (make-polynomial-dense 'y (list p1 4 0)))
-(define t2 (make-polynomial-dense 'y '(-1)))
+(define p4 (make-polynomial-sparse 'y '((2 4) (0 -1))))
+(define p5 (make-polynomial-sparse 'y (list (list 0 p1))))
 (define zero-p (make-polynomial-dense 'x '(0)))
 (define zero-p-2 (make-polynomial-dense 'x nil))

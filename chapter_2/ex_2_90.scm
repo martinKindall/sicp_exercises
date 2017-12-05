@@ -475,8 +475,8 @@
     (put 'empty-termlist? '(dense) empty-termlist?)
     (put 'make-terms '(dense) (lambda (terms) (tag terms)))
     (put 'negate '(dense) (lambda (p1) (tag (negate-dense p1))))
-    (put 'add-terms '(dense dense) (lambda (term-list term-list) (tag (add-terms-dense term-list term-list))))
-    (put 'mul-terms '(dense dense) (lambda (term-list term-list) (tag (mul-terms-dense term-list term-list))))
+    (put 'add-terms '(dense dense) (lambda (term-list1 term-list2) (tag (add-terms-dense term-list1 term-list2))))
+    (put 'mul-terms '(dense dense) (lambda (term-list1 term-list2) (tag (mul-terms-dense term-list1 term-list2))))
 )
 (install-dense-term-list-package)
 
@@ -550,8 +550,8 @@
     (define (tag x) (attach-tag 'sparse x))
     (put 'first-term '(sparse) first-term-sparse)
     (put 'adjoin-term '(term sparse) (lambda (term term-list) (tag (adjoin-term-sparse term term-list))))
-    (put 'add-terms '(sparse sparse) (lambda (term-list term-list) (tag (add-terms-sparse term-list term-list))))
-    (put 'mul-terms '(sparse sparse) (lambda (term-list term-list) (tag (mul-terms-sparse term-list term-list))))
+    (put 'add-terms '(sparse sparse) (lambda (term-list1 term-list2) (tag (add-terms-sparse term-list1 term-list2))))
+    (put 'mul-terms '(sparse sparse) (lambda (term-list1 term-list2) (tag (mul-terms-sparse term-list1 term-list2))))
     (put 'rest-terms '(sparse) (lambda (pol) (tag (rest-terms-sparse pol))))
     (put 'empty-termlist? '(sparse) empty-termlist?)
     (put 'make-terms '(sparse) (lambda (terms) (tag terms)))
@@ -711,8 +711,8 @@
 (define (coeff term) (apply-generic 'coeff term))
 (define (adjoin-term term term-list) (apply-generic 'adjoin-term term term-list))
 (define (empty-termlist? term-list) (apply-generic 'empty-termlist? term-list))
-(define (add-terms term-list term-list) (apply-generic 'add-terms term-list term-list))
-(define (mul-terms term-list term-list) (apply-generic 'mul-terms term-list term-list))
+(define (add-terms term-list1 term-list2) (apply-generic 'add-terms term-list1 term-list2))
+(define (mul-terms term-list1 term-list2) (apply-generic 'mul-terms term-list1 term-list2))
 
 
 (define z1 (make-complex-from-real-imag 2 2))

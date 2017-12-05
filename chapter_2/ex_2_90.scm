@@ -400,11 +400,11 @@
     nil
 )
 
-(define (empty-termlist? term-list)
-    (null? term-list)
-)
-
 (define (install-dense-term-list-package)
+    (define (empty-termlist? term-list)
+        (null? term-list)
+    )
+
     (define (first-term-dense term-list)
         (make-term (-1+ (length term-list)) (car term-list))
     )
@@ -451,6 +451,10 @@
 )
 
 (define (install-sparse-term-list-package)
+    (define (empty-termlist? term-list)
+        (null? term-list)
+    )
+
     (define (first-term-sparse term-list)
         (make-term (car (car term-list)) (cadr (car term-list)))
     )
@@ -513,6 +517,11 @@
     )
 
     (define (add-terms L1 L2)
+        (newline)
+        (display L1)
+        (display " ")
+        (display L2)
+        (newline)
         (cond ((empty-termlist? L1) L2)
               ((empty-termlist? L2) L1)
               (else 
@@ -672,6 +681,7 @@
 (define (order term) (apply-generic 'order term))
 (define (coeff term) (apply-generic 'coeff term))
 (define (adjoin-term term term-list) (apply-generic 'adjoin-term term term-list))
+(define (empty-termlist? term-list) (apply-generic 'empty-termlist? term-list))
 
 
 (define z1 (make-complex-from-real-imag 2 2))

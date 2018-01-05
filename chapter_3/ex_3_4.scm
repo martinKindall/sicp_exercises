@@ -1,0 +1,40 @@
+(define (make-account balance password)
+	(let ((mismatch-counter 0) (max-mismatch 7))
+	  	(define (withdraw value)
+	  	  	(if (>= balance value)
+	  	  	    (begin (set! balance (- balance value)) balance)
+	  	  	    "not enough money in the account"
+	  	  	)
+	  	)
+	  	(define (deposit value)
+	  		(set! balance (+ balance value))
+	  		balance  	
+	  	)
+	  	(define (wrong-password-alert value)
+	  		(set-mismatch-counter (1+ mismatch-counter))
+	  		(if (> mismatch-counter max-mismatch)
+	  		    (call-the-cops)
+	  		    "wrong-password"
+	  		)
+	  	)
+	  	(define (set-mismatch-counter value)
+	  		(set! mismatch-counter value)
+	  	)
+	  	(define (call-the-cops)
+	  		"We are calling the police"
+	  	)
+	  	(define (dispatch some-password action)
+	  		(if (eq? password some-password)
+	  			(begin
+	  				(set-mismatch-counter 0)
+			  	  	(cond ((eq? action 'withdraw) withdraw)
+			  	  	      ((eq? action 'deposit) deposit)
+			  	  	      (else (error "Unknown request: MAKE-ACCOUNT" action))
+			  	  	)
+	  			)
+		  	  	wrong-password-alert
+	  		)
+	  	)
+	  	dispatch
+	)
+)

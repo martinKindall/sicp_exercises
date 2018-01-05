@@ -1,0 +1,13 @@
+(define (make-monitored any_function)
+	(let ((counter 0))
+	  	(lambda (param) 
+	  		(cond ((eq? param 'how-many-calls?) counter)
+	  		      ((eq? param 'reset-count) (set! counter 0) 0)
+	  		      (else 
+	  		        (set! counter (1+ counter))
+	  		        (any_function param)	
+	  		      )
+	  		)
+	  	)
+	)  	
+)

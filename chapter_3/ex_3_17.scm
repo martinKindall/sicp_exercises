@@ -1,3 +1,6 @@
+; the idea behind count-pairs is to save the pointers to the pairs in the list structure in an auxiliary list,
+; so we can compare later with the traversed structure and not count twice any pair
+
 (define (count-pairs structure)
   	(let ((aux '()))
   		(define (struc-in-aux struc)

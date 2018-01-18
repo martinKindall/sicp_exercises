@@ -5,24 +5,42 @@
 ; constructor
 
 (define (make-queue)
-	(cons nil nil)
+    (let ((front-ptr nil) (rear-ptr nil))
+
+        (define (set-front-ptr! new-pair)
+            (set! front-ptr new-pair)
+        )
+
+        (define (set-rear-ptr! new-pair)
+            (set! rear-ptr new-pair)
+        )
+
+        (define (dispatch m)
+            (cond ((eq? m 'front-ptr) front-ptr)
+                  ((eq? m 'rear-ptr) rear-ptr)
+                  ((eq? m 'set-front-ptr!) set-front-ptr!)
+                  ((eq? m 'set-rear-ptr!) set-rear-ptr!)
+            )
+        )
+        dispatch
+    )
 )
 
 ; selectors
 
-(define (front-ptr queue) (car queue))
-(define (rear-ptr queue) (cdr queue))
+(define (front-ptr queue) (queue 'front-ptr))
+(define (rear-ptr queue) (queue 'rear-ptr))
 
 ; mutators
 
 (define (set-front-ptr! queue item)
-	(set-car! queue item)
+	((queue 'set-front-ptr!) item)
 )
 (define (set-rear-ptr! queue item)
-  	(set-cdr! queue item)
+  	((queue 'set-rear-ptr!) item)
 )
 
-; ------ abstraction barrier ------ a queue could be a pair or a list of length 2
+; ------ abstraction barrier ------ a queue could be a pair or a list of length 2 or an object, like this example
 
 ; selector
 

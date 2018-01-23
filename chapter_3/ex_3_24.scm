@@ -1,11 +1,12 @@
-(define (assoc key records)
-  	(cond ((null? records) false)
-  	      ((equal? key (caar records)) (car records))
-  	      (else (assoc key (cdr records)))
-  	)
-)
+(define (make-table same-key?)
+	
+	(define (assoc key records)
+	  	(cond ((null? records) false)
+	  	      ((same-key? key (caar records)) (car records))
+	  	      (else (assoc key (cdr records)))
+	  	)
+	)
 
-(define (make-table)
 	(let ((local-table (list '*table*)))
 		; private methods
 

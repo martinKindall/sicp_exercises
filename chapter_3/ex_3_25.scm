@@ -13,7 +13,7 @@
 		(define (lookup . list-keys)
 			(define (iter current-keys current-table)
 				(let ((subtable (assoc (car current-keys) (cdr current-table))))
-					(debug subtable)
+					;(debug subtable)
 					(if subtable
 					    (if (null? (cdr current-keys))
 					        (cdr subtable)
@@ -38,7 +38,7 @@
 
 		  	(define (iter current-keys current-table)
 				(let ((subtable (assoc (car current-keys) (cdr current-table))))
-					(debug subtable)
+					;(debug subtable)
 					(if subtable
 					    (if (null? (cdr current-keys))
 					        (set-cdr! subtable value)
@@ -82,3 +82,13 @@
 (define get (operation-table 'lookup-proc))
 (define put (operation-table 'insert-proc!))
 (define view-table (operation-table 'view))
+
+(put 'tamarugo 'arboles 'chile)
+(put 'mango 'arboles 'peru)
+(put 'banano 'arboles 'colombia)
+
+(put 'sqrt 'math 'functions 'square-root)
+(put 50 'math 'operations '-)
+(put 43 'math 'operations '+)
+
+view-table

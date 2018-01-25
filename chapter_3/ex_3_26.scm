@@ -19,7 +19,7 @@
 ;---------- abstraction barrier ----------
 
 (define (make-record identifier data)
-  	(list identifier data)
+  	(cons identifier data)
 )
 
 (define (key record)
@@ -27,7 +27,7 @@
 )
 
 (define (record-value record)
-  	(cadr record)
+  	(cdr record)
 )
 
 ;---------- abstraction barrier ----------
@@ -79,7 +79,7 @@
 
 (define (make-table)
 	
-	(let ((local-table (list-to-tree '((1 martin) (2 george) (3 samuel) (4 john) (5 tom)))))
+	(let ((local-table (list-to-tree '((1 . martin) (2 . george) (3 . samuel) (4 . john) (5 . tom)))))
 		; private methods
 
 		(define (lookup . list-keys)
@@ -109,7 +109,7 @@
 		  	)
 
 		  	(define (iter current-keys current-table)
-				(let ((subtable (assoc (car current-keys) (cdr current-table))))
+				(let ((subtable (assoc (car current-keys) current-table)))
 					;(debug subtable)
 					(if subtable
 					    (if (null? (cdr current-keys))
@@ -123,7 +123,7 @@
 					)
 				)
 			)
-			(iter list-keys local-table)
+			(iter list-keys (tree-to-list local-table))
 
 		  	'ok
 		)

@@ -32,6 +32,10 @@
   	(cdr record)
 )
 
+(define (set-record-value! record value)
+  	(set-cdr! record value)
+)
+
 ;---------- abstraction barrier ----------
 
 (define (tree-to-list tree)
@@ -118,7 +122,7 @@
 					(if subtable
 					    (if (null? (cdr current-keys))
 					        (record-value subtable)
-					        (iter (cdr current-keys) (cdr subtable))
+					        (iter (cdr current-keys) (record-value subtable))
 					    )
 					    false
 					)
@@ -142,8 +146,8 @@
 					;(debug subtable)
 					(if subtable
 					    (if (null? (cdr current-keys))
-					        (set-cdr! subtable value)
-						    (iter (cdr current-keys) (cdr subtable))
+					        (set-record-value! subtable value)
+						    (iter (cdr current-keys) (record-value subtable))
 					    )
 					    (if (null? (cdr current-keys))
 					        (adjoin-record-tree! (make-record (car current-keys) value) current-table)

@@ -1,4 +1,4 @@
-; the following example works only for one dimensional tables
+; the following example works for multi dimensional tables
 
 (define nil '())
 
@@ -118,7 +118,7 @@
 					(if subtable
 					    (if (null? (cdr current-keys))
 					        (record-value subtable)
-					        (error "Not implemented yet")
+					        (iter (cdr current-keys) (cdr subtable))
 					    )
 					    false
 					)
@@ -129,17 +129,25 @@
 
 		(define (insert! value . list-keys)
 
+			(define (form-tree list-keys value)
+		  		(let ((first-key (car list-keys)))
+		  			(cond ((null? (cdr list-keys)) (make-tree (make-record first-key value) nil nil))
+		  			      (else (make-tree (make-record first-key (form-tree (cdr list-keys) value)) nil nil))
+		  			)
+		  		)
+		  	)
+
 		  	(define (iter current-keys current-table)
 				(let ((subtable (lookup-tree (car current-keys) current-table)))
 					;(debug subtable)
 					(if subtable
 					    (if (null? (cdr current-keys))
 					        (set-cdr! subtable value)
-						    (error "Not implemented yet")
+						    (iter (cdr current-keys) (cdr subtable))
 					    )
 					    (if (null? (cdr current-keys))
 					        (adjoin-record-tree! (make-record (car current-keys) value) current-table)
-						    (error "Not implemented yet")
+						    (adjoin-record-tree! (make-record (car current-keys) (form-tree (cdr current-keys) value)) current-table)
 					    )
 					)
 				)
@@ -149,6 +157,7 @@
 		  	'ok
 		)
 
+		; it balances only the main tree, not the subtables
 		(define (balance!)
 			(define temp (list-to-tree (tree-to-list local-table)))
 			(set-car! local-table (car temp))
@@ -191,3 +200,9 @@
 (put 'dany 9)
 (debug view-table)
 (balance)
+
+; adding another dimension
+(put 'another-level 10 5)
+(put 'other 10 6)
+(put 'just 10 2)
+(debug view-table)

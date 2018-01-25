@@ -1,3 +1,5 @@
+; the following example works only for one dimensional tables
+
 (define nil '())
 
 (define (entry tree)
@@ -77,6 +79,33 @@
 	)
 )
 
+(define (adjoin-record-tree! record tree)
+	;(debug tree)
+	(cond ((null? tree) false)
+          ((= (key record) (key (entry tree))) tree)
+          ((< (key record) (key (entry tree))) 
+          	(if (null? (left-branch tree))
+          	    (set-left-branch! record tree)
+          	    (adjoin-record-tree! record (left-branch tree))
+          	)
+          )
+          ((> (key record) (key (entry tree)))
+          	(if (null? (right-branch tree))
+          	    (set-right-branch! record tree)
+          	    (adjoin-record-tree! record (right-branch tree))
+          	)
+          )
+    )
+)
+
+(define (set-right-branch! record tree)
+	(set-cdr! tree (list (left-branch tree) (make-tree record nil nil)))
+)
+
+(define (set-left-branch! record tree)
+	(set-cdr! tree (list (make-tree record nil nil) (right-branch tree)))
+)
+
 (define (make-table)
 	
 	(let ((local-table (list-to-tree '((1 . martin) (2 . george) (3 . samuel) (4 . john) (5 . tom)))))
@@ -89,7 +118,7 @@
 					(if subtable
 					    (if (null? (cdr current-keys))
 					        (record-value subtable)
-					        (iter (cdr current-keys) (record-value subtable))
+					        (error "Not implemented yet")
 					    )
 					    false
 					)
@@ -100,32 +129,31 @@
 
 		(define (insert! value . list-keys)
 
-		  	(define (form-list list-keys value)
-		  		(let ((first-key (car list-keys)))
-		  			(cond ((null? (cdr list-keys)) (cons first-key value))
-		  			      (else (list first-key (form-list (cdr list-keys) value)))
-		  			)
-		  		)
-		  	)
-
 		  	(define (iter current-keys current-table)
-				(let ((subtable (assoc (car current-keys) current-table)))
+				(let ((subtable (lookup-tree (car current-keys) current-table)))
 					;(debug subtable)
 					(if subtable
 					    (if (null? (cdr current-keys))
 					        (set-cdr! subtable value)
-						    (iter (cdr current-keys) subtable)
+						    (error "Not implemented yet")
 					    )
 					    (if (null? (cdr current-keys))
-					        (set-cdr! current-table (cons (cons (car current-keys) value) (cdr current-table)))
-						    (set-cdr! current-table (cons (form-list current-keys value) (cdr current-table)))
+					        (adjoin-record-tree! (make-record (car current-keys) value) current-table)
+						    (error "Not implemented yet")
 					    )
 					)
 				)
 			)
-			(iter list-keys (tree-to-list local-table))
+			(iter list-keys local-table)
 
 		  	'ok
+		)
+
+		(define (balance!)
+			(define temp (list-to-tree (tree-to-list local-table)))
+			(set-car! local-table (car temp))
+			(set-cdr! local-table (cdr temp))
+			local-table
 		)
 
 		; messages
@@ -134,6 +162,7 @@
 		  	(cond ((eq? m 'lookup-proc) lookup)
 		  	      ((eq? m 'insert-proc!) insert!)
 		  	      ((eq? m 'view) local-table)
+		  	      ((eq? m 'balance-tree!) balance!)
 		  	      (else (error "Unknown operation: TABLE" m))
 		  	)
 		)
@@ -153,14 +182,12 @@
 (define operation-table (make-table))
 (define get (operation-table 'lookup-proc))
 (define put (operation-table 'insert-proc!))
+(define balance (operation-table 'balance-tree!))
 (define view-table (operation-table 'view))
 
-;(put 'tamarugo 'arboles 'chile)
-;(put 'mango 'arboles 'peru)
-;(put 'banano 'arboles 'colombia)
-
-;(put 'sqrt 'math 'functions 'square-root)
-;(put 50 'math 'operations '-)
-;(put 43 'math 'operations '+)
-
-;view-table
+(put 'sam 6)
+(put 'rob 7)
+(put 'ned 8)
+(put 'dany 9)
+(debug view-table)
+(balance)

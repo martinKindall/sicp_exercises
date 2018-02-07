@@ -106,6 +106,41 @@
   	me
 )
 
+; n is a value, a and b are connectors
+(define (exp-n n a b)
+  	(define (process-new-value)
+  	  	(if (has-value? b)
+  	  	    (if (< (get-value b) 0)
+  	  	        (error "root less than 0: EXP-N" (get-value b))
+
+  	  	        (begin 
+  	  	        	(set-value! a (expt (get-value b) (/ 1 n)) me)
+  	  	        )
+  	  	    )
+  	  	    (if (has-value? a)
+		  	    (set-value! b (expt (get-value a) n) me)
+  	       	)
+  	  	)
+  	)
+
+  	(define (process-forget-value)
+  	  	(forget-value! a me)
+	  	(forget-value! b me)
+	  	(process-new-value)
+  	)
+
+  	(define (me request)
+		(cond ((eq? request 'I-have-a-value) (process-new-value))
+	  	      ((eq? request 'I-lost-my-value) (process-forget-value))
+	  	      (else (error "Unknown request: EXP-N" request))
+	  	)  	  	
+  	)
+
+  	(connect a me)
+	(connect b me)
+	me
+)
+
 (define (make-connector)
   	(let ((value false) (informant false) (constraints '()))
   		(define (set-my-value newval setter)
@@ -196,7 +231,7 @@
 )
 
 
-; celsius to fahren converter
+; expressions
 
 (define (cv c)
 	(let ((connector (make-connector)))
@@ -221,11 +256,20 @@
 
 (define (c- x y)
   	(let ((z (make-connector)))
-  		(multiplier x y z)
+  		(adder x (c* (cv -1) y) z)
   		z
   	)
 )
 
+(define (c/ x y)
+  	(let ((z (make-connector)) (w (make-connector)))
+  		(exp-n -1 y w)
+  		(multiplier x w z)
+  		z
+  	)
+)
+
+; celsius to fahren converter
 
 (define (celsius-fahrenheit-converter x)
   	(c+ (c* (c/ (cv 9) (cv 5))
@@ -235,4 +279,10 @@
 (define C (make-connector))
 (define F (celsius-fahrenheit-converter C))
 
+(probe "C: " C)
+(probe "F: " F)
 
+(set-value! C 25 'user)
+(forget-value! C 'user)
+
+(set-value! F 77 'user)

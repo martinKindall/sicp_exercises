@@ -66,3 +66,23 @@
               (set! clients (- clients 1)) 
               (clear! access-mutex)))) 
      the-semaphore))
+
+; implementation a
+
+(define (make-semaphore-mutex n)
+    (let ((mutex (make-mutex)) (clients '(0)))
+        (define (the-semaphore m)
+            (cond ((eq? m 'acquire)
+                   (mutex 'acquire)
+                   (if (> clients n)
+                       (begin
+                           (mutex 'release)
+                           (the-semaphore 'acquire))
+                       (begin
+                            (set-car! clients (1+ (car clients)))
+                            (mutex 'release))))
+                  ((eq? m 'release)
+                   (mutex 'acquire)
+                   (set-car! clients (1- (car clients))
+                   (mutex 'release)))))
+        the-semaphore))

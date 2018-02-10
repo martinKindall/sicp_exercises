@@ -18,3 +18,21 @@
   	    	false
   	    )))
 
+(define (make-semaphore n)
+	(let ((cells (make-list n '(false))))
+		(define (the-semaphore m)
+			(cond ((eq? m 'acquire) 
+				   (if (test-and-set-many! cells)
+				       (the-semaphore 'acquire)))
+			      ((eq? m 'release) (clear-many! cells))))
+	the-semaphore))
+
+(define (test-and-set-many! cells)
+  	(cond ((null? cells) true)
+  	      ((test-and-set! (car cells)) (test-and-set-many! (cdr cells)))
+  	      (else false)))
+
+(define (clear-many! cells)
+  	(cond ((null? cells) (error "Releasing an empty mutex"))
+  	      ((car cells) (clear! (car cells)))
+  	      (else (clear-many! (cdr cells)))))

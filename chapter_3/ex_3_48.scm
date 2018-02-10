@@ -1,0 +1,6 @@
+(define (serialized-exchange acc1 acc2)
+	(let ((serializer1 (acc1 'serializer)) (serializer2 (acc2 'serializer))
+		  (accNumber1 (acc1 'id)) (accNumber2 (acc2 'id)))
+		(if (> accNumber2 accNumber1)
+	    	((serializer2 (serializer1 exchange)) acc1 acc2)
+		    ((serializer1 (serializer2 exchange)) acc1 acc2))))

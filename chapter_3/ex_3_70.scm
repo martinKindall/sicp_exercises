@@ -42,3 +42,22 @@
 (define integers (integers-starting-from 1))
 
 (define integer-pairs-a (weighted-pairs integers integers (lambda (pair) (apply + pair))))
+
+(define integer-pairs-b-raw 
+    (weighted-pairs 
+        integers 
+        integers 
+        (lambda (pair) 
+            (+ 
+                (* 2 (car pair))
+                (* 3 (cadr pair))
+                (* 5 (car pair) (cadr pair))))))
+
+(define (not-div-by-2-3-5? number)
+    (not (or (= 0 (remainder number 2)) (= 0 (remainder number 3)) (= 0 (remainder number 5)))))
+
+(define integer-pairs-b-filtered
+    (stream-filter 
+        (lambda (pair)
+            (and (not-div-by-2-3-5? (car pair)) (not-div-by-2-3-5? (cadr pair))))
+    integer-pairs-b-raw))

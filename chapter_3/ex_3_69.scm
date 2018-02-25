@@ -44,3 +44,25 @@
 			(<= (car x) (cadr x)) 
 			(= (+ (square (car x)) (square (cadr x))) (square (caddr x)))))
 	int_triples))
+
+; ----- second solution by meteorgan + adams
+
+(define (triples-v2 s t u)
+        (cons-stream (list 
+		    (stream-car s)
+		    (stream-car t) 
+		    (stream-car u))
+		(interleave
+		    (stream-map (lambda (x) (cons (stream-car s) x))
+		                           (stream-cdr (pairs t u)))
+		    (triples-v2 (stream-cdr s)
+		                 (stream-cdr t)
+		                 (stream-cdr u)))))
+
+(define (phythagorean-numbers)
+        (define (square x) (* x x))
+        (define numbers (triples-v2 integers integers integers))
+        (stream-filter (lambda (x) 
+		    (= (square (caddr x)) 
+		    (+ (square (car x)) (square (cadr x)))))
+		numbers))

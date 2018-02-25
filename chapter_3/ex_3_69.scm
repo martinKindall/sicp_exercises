@@ -29,8 +29,6 @@
 (define (triples s t u)
 	(define pairs_t_u (pairs t u))
 	(define (triples-aux current_s current_pairs_t_u) 
-		(debug (stream-car current_s))
-		(debug (stream-car current_pairs_t_u))
 		(cons-stream
 			(append (list (stream-car current_s)) (stream-car current_pairs_t_u))
 			(interleave
@@ -39,3 +37,10 @@
 	(triples-aux s pairs_t_u))
 
 (define int_triples (triples integers integers integers))
+
+(define pythagorean_triples (stream-filter 
+	(lambda (x) 
+		(and 
+			(<= (car x) (cadr x)) 
+			(= (+ (square (car x)) (square (cadr x))) (square (caddr x)))))
+	int_triples))

@@ -6,6 +6,9 @@
     (newline)
 )
 
+(define (cube number)
+    (* number (square number)))
+
 (define (integers-starting-from n)
     (cons-stream n (integers-starting-from (1+ n))))
 
@@ -70,26 +73,36 @@
             (weighted-pairs (stream-cdr s) (stream-cdr t) weight)
             weight)))
 
-(define (filter-3-consecutive-weights s weight)
-  	(filter-n-consecutive-weights s weight 3))
+(define (print-pair special-pair weight)
+    (debug special-pair)
+    (display (weight (car special-pair)))
+    (newline))
+
+(define (print-cicle i n stream weight)
+	(if (> i n)
+	    'done
+	    (begin
+	    	(print-pair (stream-car stream) weight)
+	    	(print-cicle (1+ i) n (stream-cdr stream) weight))))
+
+; here begins the solution
 
 (define (special-weight pair)
     (+ (square (car pair)) (square (cadr pair))))
 
 (define special-pairs (weighted-pairs integers integers special-weight))
 
-(define filtered-pairs (filter-3-consecutive-weights special-pairs special-weight))
+(define filtered-pairs (filter-n-consecutive-weights special-pairs special-weight 3))
 
-(define (print-pair special-pair)
-    (debug special-pair)
-    (display (+ (square (car (car special-pair))) (square (cadr (car special-pair)))))
-    (newline))
+(print-cicle 0 10 filtered-pairs special-weight)
 
-(define (print-cicle i n)
-	(if (> i n)
-	    'done
-	    (begin
-	    	(print-pair (stream-ref filtered-pairs i))
-	    	(print-cicle (1+ i) n))))
+; thanks to the abstraction, now calculating ramanujan takes fewer lines of code
 
-(print-cicle 0 20)
+(define (ramanujan-weight pair)
+    (+ (cube (car pair)) (cube (cadr pair))))
+
+(define ramanujan-raw (weighted-pairs integers integers ramanujan-weight))
+
+(define ramanujan-pairs (filter-n-consecutive-weights ramanujan-raw ramanujan-weight 2))
+
+(print-cicle 0 5 ramanujan-pairs ramanujan-weight)
